@@ -14,6 +14,7 @@
   --p2: #1d5bd8; --p2-ink: #ffffff; --p2-text: #1d5bd8;
   --p3: #ffc21a; --p3-ink: #14161c; --p3-text: #8a5c00;
   --p4: #087a4e; --p4-ink: #ffffff; --p4-text: #087a4e;
+  --shadow: rgb(20 22 28 / 0.14);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -26,6 +27,7 @@
     --p2: #7ea6ff; --p2-ink: #0f1424; --p2-text: #8fb4ff;
     --p3: #ffd047; --p3-ink: #0f1424; --p3-text: #ffd047;
     --p4: #3fd69a; --p4-ink: #0f1424; --p4-text: #3fd69a;
+    --shadow: rgb(0 0 0 / 0.5);
     color-scheme: dark;
   }
 }
@@ -42,6 +44,7 @@
   --p2: #7ea6ff; --p2-ink: #0f1424; --p2-text: #8fb4ff;
   --p3: #ffd047; --p3-ink: #0f1424; --p3-text: #ffd047;
   --p4: #3fd69a; --p4-ink: #0f1424; --p4-text: #3fd69a;
+  --shadow: rgb(0 0 0 / 0.5);
   color-scheme: dark;
 }
 
@@ -347,13 +350,28 @@
   p code {
     @apply rounded bg-sunk px-1 py-px font-mono text-[.9em];
   }
+  /* Sobre los bloques amarillos (bg-sign) el --sunk oscuro deja el texto sin contraste: velo del color del texto (≥ 8:1 en claro y oscuro) */
+  .text-sign-ink code {
+    background: color-mix(in srgb, var(--sign-ink) 12%, transparent);
+  }
+
+  /* Lienzo de las vistas previas: fondo punteado, como una mesa de diseño, con el componente en una tarjeta.
+     Los puntos son decorativos; el contenido va siempre sobre la tarjeta (--surface). */
+  .lienzo {
+    background-color: var(--sunk);
+    background-image: radial-gradient(color-mix(in srgb, var(--edge) 45%, transparent) 1px, transparent 1.5px);
+    background-size: 18px 18px;
+  }
+  .lienzo > .demo {
+    box-shadow: 0 1px 2px var(--shadow), 0 12px 32px -16px var(--shadow);
+  }
 
   /* Demos en vivo de la página de componentes: estilos mínimos para elementos nativos */
   .demo :where(button) {
-    @apply min-h-11 cursor-pointer rounded-lg border-2 border-ink bg-surface px-4 py-2 font-semibold text-ink;
+    @apply min-h-11 cursor-pointer rounded-lg border-2 border-ink bg-surface px-4 py-2 font-semibold text-ink transition-[background-color,scale] duration-150 hover:bg-sunk motion-safe:active:scale-[.97];
   }
   .demo :where(input:not([type="radio"], [type="checkbox"]), select, textarea) {
-    @apply min-h-11 w-full max-w-sm rounded-lg border-[1.5px] border-muted bg-surface px-3 py-2 text-ink;
+    @apply min-h-11 w-full max-w-sm rounded-lg border-[1.5px] border-muted bg-surface px-3 py-2 text-ink transition-colors hover:border-ink focus:border-ink;
   }
   .demo :where(input[type="radio"], input[type="checkbox"]) {
     @apply size-5 accent-accent;
@@ -371,10 +389,13 @@
     @apply flex min-h-11 items-center gap-2 font-normal;
   }
   .demo :where(details) {
-    @apply rounded-lg border border-line bg-surface;
+    @apply overflow-hidden rounded-lg border border-line bg-surface;
   }
   .demo :where(summary) {
-    @apply flex min-h-11 cursor-pointer items-center px-4 font-bold;
+    @apply flex min-h-11 cursor-pointer items-center px-4 font-bold hover:bg-sunk;
+  }
+  .demo :where(details[open] > summary) {
+    @apply mb-3 border-b border-line;
   }
   .demo :where(details > p) {
     @apply px-4 pb-4;
@@ -386,7 +407,10 @@
     @apply mb-2 text-left font-bold;
   }
   .demo :where(th, td) {
-    @apply border-b border-line px-2 py-2 text-left;
+    @apply border-b border-line px-3 py-2 text-left;
+  }
+  .demo :where(thead th) {
+    @apply border-b-2 border-ink bg-sunk font-bold;
   }
   .demo :where(dialog) {
     @apply m-auto max-w-[min(32rem,calc(100%-2rem))] rounded-xl border-2 border-ink bg-surface p-6 text-ink;
