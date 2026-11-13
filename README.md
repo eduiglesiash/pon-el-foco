@@ -7,6 +7,8 @@ Web informativa sobre la normativa de accesibilidad digital en España y la UE. 
 - **Inicio** (`/`): qué es la web y qué se puede hacer en cada sección.
 - **Criterios** (`/criterios/`): los criterios WCAG 2.2 en formato documentación, con buscador y filtros. Cada criterio tiene su página (`/criterios/1-4-3/`) con caso de uso, ejemplos de código correcto e incorrecto (A y AA) y cómo comprobarlo.
 - **Componentes** (`/componentes/`): elementos HTML nativos y lo que dan de serie, y componentes a medida (pestañas, interruptor, autocompletar, carrusel…) con roles ARIA, teclado, código y demos en vivo.
+- **ARIA** (`/aria/`): los atributos y roles de WAI-ARIA más usados (nombre, estados, relaciones, formularios, mensajes dinámicos, `aria-hidden` y diálogos): qué hacen, cuándo usarlos y cuándo no, código correcto e incorrecto, ejemplos de uso y demos en vivo.
+- **¿Qué alt le pongo?** (`/alt/`): herramienta paso a paso, basada en el árbol de decisión del W3C, que lleva al texto alternativo adecuado para una imagen, icono o gráfica. Muestra el recorrido, permite volver atrás y cambiar cualquier respuesta, y cada conclusión tiene su URL, explicación y código. Funciona sin JavaScript.
 - **¿Me afecta?** (`/me-afecta/`): comprobador de tres preguntas, por qué hacerlo aunque no obligue la ley, asistente con IA y preguntas frecuentes.
 - **Normativa** (`/normativa/`): RD 1112/2018, Ley 11/2023, EN 301 549 y LSSI / Ley 56/2007, cronología, sanciones, declaración de accesibilidad y enlaces oficiales.
 

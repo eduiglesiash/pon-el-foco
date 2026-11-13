@@ -51,15 +51,13 @@ const path = Astro.url.pathname.replace(/\/?$/, "/");
       <button
         type="button"
         id="txtDown"
-        aria-label="Reducir tamaño del texto"
         class="min-h-11 min-w-11 cursor-pointer rounded-full border border-edge bg-transparent font-bold text-ink transition-colors hover:bg-sunk disabled:cursor-not-allowed disabled:opacity-50"
-      >A−</button>
+      >A−<span class="sr-only"> Reducir tamaño del texto</span></button>
       <button
         type="button"
         id="txtUp"
-        aria-label="Aumentar tamaño del texto"
         class="min-h-11 min-w-11 cursor-pointer rounded-full border border-edge bg-transparent font-bold text-ink transition-colors hover:bg-sunk disabled:cursor-not-allowed disabled:opacity-50"
-      >A+</button>
+      >A+<span class="sr-only"> Aumentar tamaño del texto</span></button>
     </div>
     <button
       type="button"

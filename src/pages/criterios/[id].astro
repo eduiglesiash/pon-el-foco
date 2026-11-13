@@ -206,6 +206,14 @@ const siguiente = next && paso(next);
         <h2 id="t-que" class="sr-only">Qué pide</h2>
         <p class="text-[1.22rem] leading-relaxed">{c.descripcion}</p>
         <p><b>A quién ayuda:</b> {c.ayuda}</p>
+        {
+          c.id === "1.1.1" && (
+            <p class="not-prose rounded-xl border border-line bg-sunk px-5 py-4">
+              <b>¿Dudas con una imagen concreta?</b> Usa la herramienta <a href="/alt/" class="font-bold">¿Qué alt le pongo?</a>: unas
+              preguntas te llevan al alt adecuado, con el porqué y el código.
+            </p>
+          )
+        }
       </section>
 
       <section id="caso" aria-labelledby="t-caso" class="prose mt-10 max-w-[44rem] scroll-mt-24">

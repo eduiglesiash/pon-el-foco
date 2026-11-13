@@ -12,6 +12,8 @@ export interface Codigo {
   code: string;
   /** Etiqueta del bloque; por defecto, el lenguaje */
   label?: string;
+  /** Valoración del bloque: correcto o incorrecto (se pinta con texto e icono) */
+  tone?: "bien" | "mal";
   /** Vista previa propia de este bloque (cuando el componente enseña varias versiones); "same" reutiliza el código */
   demo?: string;
 }
@@ -42,6 +44,8 @@ export interface Componente {
   /** HTML de la vista previa en vivo; "same" reutiliza el primer bloque de código. Sin demo, no se muestra. */
   demo?: string;
   nota?: string;
+  /** Enlace a una herramienta o página del sitio relacionada */
+  enlace?: { href: string; texto: string };
   /** Criterios WCAG relacionados */
   criterios: string[];
   /** Patrón en la guía de prácticas de ARIA del W3C */
@@ -384,6 +388,7 @@ export const NATIVOS: Componente[] = [
   <figcaption>Evolución de las ventas online, 2024 a 2026 (datos de ejemplo).</figcaption>
 </figure>
 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 12'%3E%3Cpath d='M4 6c40-6 80 6 116 0s76-6 116 0' fill='none' stroke='%23ffc21a' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" width="240" height="12" alt="">`,
+    enlace: { href: "/alt/", texto: "¿Dudas con una imagen concreta? Usa la herramienta «¿Qué alt le pongo?»" },
     criterios: ["1.1.1"],
   },
   {

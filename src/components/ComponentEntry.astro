@@ -70,7 +70,7 @@ const nombre = (id: string) => CRITERIOS.find((x) => x.id === id)?.nombre ?? "";
             <tbody>
               {c.teclado.map(([k, v]) => (
                 <tr>
-                  <th scope="row" class="border-b border-line py-1.5 pr-3 text-left align-top font-mono font-semibold whitespace-nowrap">
+                  <th scope="row" class="border-b border-line py-1.5 pr-3 text-left align-top font-mono font-semibold [overflow-wrap:anywhere]">
                     {k}
                   </th>
                   <td class="border-b border-line py-1.5">{v}</td>
@@ -112,6 +112,7 @@ const nombre = (id: string) => CRITERIOS.find((x) => x.id === id)?.nombre ?? "";
     }
   </div>
 
+  {c.enlace && <p class="max-w-[46rem] font-bold"><a href={c.enlace.href}>{c.enlace.texto}</a></p>}
   {c.nota && <p class="max-w-[46rem] rounded-[1.25rem_.75rem_1.5rem_.9rem] bg-sign px-5 py-4 text-sign-ink"><b>Ojo:</b> {c.nota}</p>}
 
   <p class="text-[.93rem] text-muted">

@@ -2,6 +2,7 @@
 export const SECCIONES = [
   { href: "/criterios/", label: "Criterios" },
   { href: "/componentes/", label: "Componentes" },
+  { href: "/aria/", label: "ARIA" },
   { href: "/me-afecta/", label: "¿Me afecta?" },
   { href: "/normativa/", label: "Normativa" },
 ];
