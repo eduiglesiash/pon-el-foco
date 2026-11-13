@@ -12,6 +12,8 @@ export interface Codigo {
   code: string;
   /** Etiqueta del bloque; por defecto, el lenguaje */
   label?: string;
+  /** Valoración del bloque: correcto o incorrecto (se pinta con texto e icono) */
+  tone?: "bien" | "mal";
   /** Vista previa propia de este bloque (cuando el componente enseña varias versiones); "same" reutiliza el código */
   demo?: string;
 }
