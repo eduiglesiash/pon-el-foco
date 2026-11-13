@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { CRITERIOS, slug } from "../data/criterios";
 
 // Sitemap generado en el build, sin dependencias: las páginas fijas y una por criterio
-const RUTAS = ["/", "/criterios/", "/componentes/", "/aria/", "/me-afecta/", "/normativa/", ...CRITERIOS.map((c) => `/criterios/${slug(c.id)}/`)];
+const RUTAS = ["/", "/criterios/", "/componentes/", "/aria/", "/alt/", "/me-afecta/", "/normativa/", ...CRITERIOS.map((c) => `/criterios/${slug(c.id)}/`)];
 
 export const GET: APIRoute = ({ site }) => {
   const urls = RUTAS.map((r) => `  <url><loc>${new URL(r, site).href}</loc></url>`).join("\n");
