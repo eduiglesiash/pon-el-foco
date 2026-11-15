@@ -170,6 +170,8 @@ const src = "mt-auto text-[.92rem]";
           Si la normativa sectorial no fija otras, se aplica el régimen general de la Ley General de Derechos de las Personas
           con Discapacidad.
         </p>
+        {/* Con el texto muy ampliado en móvil la tabla puede no caber: se desplaza dentro de su caja, que se puede enfocar para usarla con teclado */}
+        <div class="overflow-x-auto" tabindex="0" role="region" aria-label="Tabla de multas">
         <table class="w-full border-collapse tabular-nums">
           <caption class="sr-only">Importe de las multas según gravedad</caption>
           <thead>
@@ -189,6 +191,7 @@ const src = "mt-auto text-[.92rem]";
             }
           </tbody>
         </table>
+        </div>
         <p class="mt-3 text-[.92rem] text-muted">
           Pagar la multa no exime de corregir el problema. Las comunidades autónomas pueden tener su propio régimen.
         </p>
