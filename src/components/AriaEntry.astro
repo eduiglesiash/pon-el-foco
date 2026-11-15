@@ -1,0 +1,111 @@
+---
+import CodeExample from "./CodeExample.astro";
+import { CRITERIOS, slug } from "../data/criterios";
+import { NATIVOS, A_MEDIDA } from "../data/componentes";
+import { SPEC, type EntradaAria } from "../data/aria";
+
+interface Props {
+  e: EntradaAria;
+}
+
+const { e } = Astro.props;
+const criterio = (id: string) => CRITERIOS.find((c) => c.id === id);
+const componente = (id: string) => [...NATIVOS, ...A_MEDIDA].find((c) => c.id === id);
+
+// Un enlace roto es un error de contenido: que falle la build en vez de publicar un enlace muerto
+for (const id of e.criterios) if (!criterio(id)) throw new Error(`aria.ts (${e.id}): el criterio ${id} no existe`);
+for (const id of e.componentes ?? []) if (!componente(id)) throw new Error(`aria.ts (${e.id}): el componente ${id} no existe`);
+---
+
+<article id={e.id} aria-labelledby={`t-${e.id}`} class="flex min-w-0 scroll-mt-24 flex-col gap-6 [overflow-wrap:anywhere]">
+  <header class="flex flex-col gap-2">
+    <h3 id={`t-${e.id}`} class="font-mono text-[clamp(1.5rem,1.2rem+1.4vw,2.1rem)] tracking-[-0.02em] break-words">
+      {e.nombre}
+    </h3>
+    <p class="max-w-[46rem] text-lead">{e.queHace}</p>
+  </header>
+
+  <div class="grid gap-5 min-[861px]:grid-cols-2">
+    <div>
+      <h4 class="mb-2 font-bold">Cuándo usarlo</h4>
+      <ul class="flex flex-col gap-1.5">
+        {e.cuando.map((t) => <li class="ml-5 list-disc">{t}</li>)}
+      </ul>
+    </div>
+    <div>
+      <h4 class="mb-2 font-bold">Cuándo no</h4>
+      <ul class="flex flex-col gap-1.5">
+        {e.cuandoNo.map((t) => <li class="ml-5 list-disc">{t}</li>)}
+      </ul>
+    </div>
+  </div>
+
+  <div class="max-w-[46rem] rounded-xl border border-line bg-sunk px-5 py-4">
+    <h4 class="font-bold">Qué anuncia un lector de pantalla</h4>
+    <p class="mt-1">{e.anuncia}</p>
+  </div>
+
+  <div class="ejemplo flex flex-col overflow-hidden rounded-2xl border border-edge">
+    {e.codigo.map((k) => <CodeExample code={k.code} lang={k.lang} tone={k.tone} label={k.label} />)}
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <h4 class="text-title font-bold">Ejemplo de uso: {e.uso.titulo}</h4>
+    <p class="max-w-[46rem]">{e.uso.texto}</p>
+    {
+      (e.demo || e.uso.codigo.length > 0) && (
+        <div class="ejemplo overflow-hidden rounded-2xl border border-edge">
+          {e.demo && (
+            <div class:list={[e.uso.codigo.length > 0 && "border-b border-edge"]}>
+              <p class="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-line bg-surface px-5 py-2.5 text-caption font-bold text-muted">
+                <span class="rounded-full bg-sign px-2 py-px text-sign-ink">Vista previa</span>
+                Pruébala con el ratón y con el teclado
+              </p>
+              <div class="lienzo px-[clamp(.75rem,4vw,3rem)] py-[clamp(1.25rem,4vw,3rem)]">
+                <div
+                  class="demo mx-auto flex w-full max-w-2xl flex-col items-start gap-3 rounded-xl border border-line bg-surface p-[clamp(1rem,3vw,1.75rem)]"
+                  set:html={e.demo}
+                />
+              </div>
+            </div>
+          )}
+          {e.uso.codigo.map((k) => (
+            <CodeExample code={k.code} lang={k.lang} tone={k.tone} label={k.label} />
+          ))}
+        </div>
+      )
+    }
+  </div>
+
+  <p class="text-[.93rem] text-muted">
+    <b>Criterios relacionados:</b>{" "}
+    {
+      e.criterios.map((id, i) => (
+        <>
+          {i > 0 && " · "}
+          <a href={`/criterios/${slug(id)}/`}>
+            {id} {criterio(id)!.nombre}
+          </a>
+        </>
+      ))
+    }
+    {
+      e.componentes && (
+        <>
+          <br />
+          <b>Lo verás en:</b>{" "}
+          {e.componentes.map((id, i) => (
+            <>
+              {i > 0 && " · "}
+              <a href={`/componentes/#${id}`}>{componente(id)!.nombre}</a>
+            </>
+          ))}
+        </>
+      )
+    }
+    <br />
+    <a href={`${SPEC}#${e.spec}`} target="_blank" rel="noopener" hreflang="en">
+      Definición en la especificación WAI-ARIA 1.2 (en inglés)
+    </a>
+  </p>
+</article>

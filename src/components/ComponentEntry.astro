@@ -70,7 +70,7 @@ const nombre = (id: string) => CRITERIOS.find((x) => x.id === id)?.nombre ?? "";
             <tbody>
               {c.teclado.map(([k, v]) => (
                 <tr>
-                  <th scope="row" class="border-b border-line py-1.5 pr-3 text-left align-top font-mono font-semibold whitespace-nowrap">
+                  <th scope="row" class="border-b border-line py-1.5 pr-3 text-left align-top font-mono font-semibold [overflow-wrap:anywhere]">
                     {k}
                   </th>
                   <td class="border-b border-line py-1.5">{v}</td>

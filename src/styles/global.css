@@ -427,6 +427,17 @@
   .demo :where(a) {
     @apply font-semibold;
   }
+  /* Demos de la página de ARIA: el aspecto sale del atributo ARIA, no de una clase aparte */
+  .demo :where(button[aria-expanded])::after {
+    content: "+" / "";
+    @apply ml-2 font-mono;
+  }
+  .demo :where(button[aria-expanded="true"])::after {
+    content: "−" / "";
+  }
+  .demo :where(input[aria-invalid="true"]) {
+    @apply border-2 border-ko;
+  }
 
   /* Vistas previas de la página de componentes */
   .ejemplo :where(.astro-code, figcaption) {
