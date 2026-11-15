@@ -30,6 +30,48 @@ const text = label ?? (tone === "bien" ? "Correcto" : tone === "mal" ? "Incorrec
     {tone !== "neutro" && <Icon name={tone === "bien" ? "check" : "cross"} size={16} />}
     {text}
     {tone !== "neutro" && <span class="ml-auto font-mono font-semibold">{LANG[lang]}</span>}
+    {/* Visible solo con JavaScript y portapapeles disponibles; el texto del bloque es el código sin resaltado */}
+    <button
+      type="button"
+      data-copy
+      hidden
+      class:list={[
+        "min-h-8 cursor-pointer rounded-md border-[1.5px] border-current bg-transparent px-2.5 font-bold text-current hover:underline",
+        tone === "neutro" && "ml-auto",
+      ]}
+    >
+      <span data-copiar-texto>Copiar</span><span class="sr-only"> el código {text === LANG[lang] ? "" : `«${text}» `}en {LANG[lang]}</span>
+    </button>
   </figcaption>
   <Code code={code.trim()} lang={lang === "txt" ? "plaintext" : lang} theme="css-variables" wrap />
 </figure>
+
+<script>
+  // Copiar el código de un bloque. Una sola región role="status" anuncia el resultado sin mover el foco.
+  if (navigator.clipboard) {
+    const estado = Object.assign(document.createElement("p"), { className: "sr-only" });
+    estado.setAttribute("role", "status");
+    document.body.append(estado);
+
+    for (const boton of document.querySelectorAll<HTMLButtonElement>("[data-copy]")) {
+      boton.hidden = false;
+      const texto = boton.querySelector("[data-copiar-texto]")!;
+      let espera: ReturnType<typeof setTimeout>;
+      boton.addEventListener("click", async () => {
+        const codigo = boton.closest("figure")!.querySelector("pre")!.textContent ?? "";
+        try {
+          await navigator.clipboard.writeText(codigo);
+          texto.textContent = "Copiado";
+          estado.textContent = "Código copiado al portapapeles.";
+        } catch {
+          estado.textContent = "No se ha podido copiar. Selecciona el código y cópialo a mano.";
+        }
+        clearTimeout(espera);
+        espera = setTimeout(() => {
+          texto.textContent = "Copiar";
+          estado.textContent = "";
+        }, 2500);
+      });
+    }
+  }
+</script>

@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "description": "Pon el foco es una web estática de solo lectura sobre accesibilidad web. Los agentes pueden leer todo el contenido. No hay API ni formularios que enviar.",
+  "interactions": {
+    "read": {
+      "allowed": true,
+      "paths": ["/*"]
+    },
+    "api": {
+      "allowed": false
+    }
+  },
+  "contact": "https://github.com/eduiglesiash/pon-el-foco/issues"
+}
