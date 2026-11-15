@@ -6,15 +6,17 @@ En `/componentes/`, `/aria/` y `/alt/`, el bloque amarillo de ideas clave va deb
 
 ## What Changes
 
-En pantallas anchas, la cabecera de estas tres páginas pasa a tener dos columnas al 50 %, alineadas arriba:
+En pantallas anchas, la cabecera de estas tres páginas pasa a tener dos columnas alineadas arriba:
 
-| Página | Columna izquierda | Columna derecha |
-|---|---|---|
-| `/componentes/` | «Componentes accesibles, con código» e introducción | «La regla de oro» |
-| `/aria/` | «WAI-ARIA, bien usado» e introducción | «Antes de usar ARIA» |
-| `/alt/` | «¿Qué alt le pongo?» e introducción | «Qué es el alt» |
+| Página | Columna izquierda | Columna derecha | Reparto |
+|---|---|---|---|
+| `/componentes/` | «Componentes accesibles, con código» e introducción | «La regla de oro» | 50 % / 50 % |
+| `/aria/` | «WAI-ARIA, bien usado» e introducción | «Antes de usar ARIA» | 30 % / 70 % |
+| `/alt/` | «¿Qué alt le pongo?» e introducción | «Qué es el alt» | 30 % / 70 % |
 
-- `PageHead` recibe el bloque en un slot con nombre (`aside`). Si la página no lo usa, la cabecera queda igual que ahora: las demás páginas no cambian.
+- **Revisión tras la PR #7:** ARIA y alt pasan de 50/50 a 30/70, porque sus bloques tienen mucho más texto que el título. Componentes se queda en 50/50.
+- `PageHead` recibe el bloque en un slot con nombre (`aside`) y una prop que elige el reparto. Si la página no usa el slot, la cabecera queda igual que ahora: las demás páginas no cambian.
+- **El título nunca se desborda.** «WAI-ARIA,» mide unos 276 px a 1024 px, y el 30 % de esa ventana son 271 px. El navegador lo parte por el guion («WAI-» / «ARIA,»), así que cabe. Con el texto al 200 %, la columna del título se ensancha lo justo para la palabra más larga, en vez de reducir la letra o dejar que se salga.
 - En pantallas estrechas no cambia nada: título, introducción y bloque, uno debajo de otro, en ese orden.
 - No cambia el texto, los colores ni los estilos del bloque, solo su posición.
 
@@ -34,7 +36,7 @@ En pantallas anchas, la cabecera de estas tres páginas pasa a tener dos columna
 
 ## Impact
 
-- **Modificado:** `src/components/PageHead.astro` (slot `aside` y rejilla), `src/pages/componentes.astro`, `src/pages/aria.astro` y `src/pages/alt.astro` (mover el bloque al slot y quitar su margen inferior propio).
+- **Modificado:** `src/components/PageHead.astro` (slot `aside`, rejilla y prop de reparto), `src/pages/componentes.astro`, `src/pages/aria.astro` y `src/pages/alt.astro` (mover el bloque al slot y quitar su margen inferior propio).
 - **Dependencias:** ninguna nueva.
 
 ## Out of Scope (Deferred)

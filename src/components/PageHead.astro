@@ -4,17 +4,24 @@ interface Props {
   title: string;
   /** Usa el contenedor ancho, para páginas con columna lateral */
   wide?: boolean;
+  /** Con bloque lateral: "mitad" (50/50) o "bloque" (30 % título, 70 % bloque) */
+  reparto?: "mitad" | "bloque";
 }
 
-const { title, wide = false } = Astro.props;
+const { title, wide = false, reparto = "mitad" } = Astro.props;
 const ancho = wide ? "wrap-wide" : "wrap";
-// Con el slot «aside», el bloque va a la derecha del título al 50 % desde lg; por debajo, debajo de la introducción
+// Con el slot «aside», el bloque va a la derecha del título desde lg; por debajo, debajo de la introducción
 const lateral = Astro.slots.has("aside");
+// Clases enteras para que Tailwind las detecte. min-content: la columna del título crece si su palabra más larga no cabe
+const COLUMNAS = {
+  mitad: "lg:grid-cols-2",
+  bloque: "lg:grid-cols-[minmax(min-content,3fr)_minmax(0,7fr)]",
+};
 ---
 
 {
   lateral ? (
-    <div class:list={[ancho, "grid gap-x-12 gap-y-8 pt-[clamp(2rem,5vw,3.5rem)] pb-10 lg:grid-cols-2 lg:items-start"]}>
+    <div class:list={[ancho, "grid gap-x-12 gap-y-8 pt-[clamp(2rem,5vw,3.5rem)] pb-10 lg:items-start", COLUMNAS[reparto]]}>
       <div class="flex flex-col gap-4">
         <h1 class="max-w-[22ch] text-[clamp(2.2rem,1.4rem+3.6vw,3.75rem)]">{title}</h1>
         <p class="max-w-176 text-[1.15rem] text-muted"><slot /></p>

@@ -49,6 +49,27 @@ const ancho = wide ? "wrap-wide" : "wrap";
 - La rama sin bloque lateral es el marcado actual sin cambios. Así se cumple el requisito «Página sin bloque lateral» por construcción.
 - **Alternativa descartada:** una rejilla en cada página. Repite el mismo código tres veces y la cuarta página que lo necesite tendría que copiarlo.
 
+### 1b. Reparto de columnas: prop `reparto` (revisión tras la PR #7)
+
+```ts
+interface Props {
+  title: string;
+  wide?: boolean;
+  /** Con bloque lateral: "mitad" (50/50, por defecto) o "bloque" (30 % título, 70 % bloque) */
+  reparto?: "mitad" | "bloque";
+}
+const COLUMNAS = {
+  mitad: "lg:grid-cols-2",
+  bloque: "lg:grid-cols-[minmax(min-content,3fr)_minmax(0,7fr)]",
+};
+```
+
+- `3fr` y `7fr` reparten el ancho disponible después del hueco (`gap-x-12`): 30 % y 70 %, como pide la spec.
+- `minmax(min-content, 3fr)`: la columna del título nunca baja de su `min-content`, que es la palabra más larga del `h1` o de la introducción. Normalmente el 30 % ya es más ancho y el reparto es exacto. Si no lo es (texto al 200 %), la columna crece lo justo y la del bloque (`minmax(0, 7fr)`) cede ese espacio. Así se cumple «El título cabe en su columna» sin JavaScript ni un tamaño de letra especial.
+- «WAI-ARIA,» se parte por el guion de forma natural: es un punto de corte permitido para el navegador, así que su `min-content` es «ARIA,» y no la palabra entera.
+- Las clases van escritas enteras en el objeto `COLUMNAS`, no montadas a trozos, para que Tailwind las detecte al compilar.
+- **Alternativa descartada:** bajar el tamaño del `h1` en la columna estrecha. Lo descartaste en la spec («No se reduce el tamaño de letra»).
+
 ### 2. Cambios en cada página
 
 - El bloque pasa dentro de `<PageHead>` con `slot="aside"` en su elemento raíz (el `<div>` o el `<section>`). Así no hace falta un `<Fragment>`.
