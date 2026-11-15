@@ -189,7 +189,8 @@ const siguiente = next && paso(next);
               "self-start font-mono text-[clamp(3rem,2rem+5vw,5.5rem)] leading-none font-semibold tracking-[-0.04em] text-(--c-text)",
             ]}
             style={`view-transition-name: c-${slug(c.id)}`}>{c.id}</span
-          >
+          >{" "}
+          {/* El espacio separa número y nombre en el texto del h1 (lectores y buscadores); en flex no se ve */}
           <span class="mt-2 text-[clamp(1.9rem,1.3rem+2.4vw,3rem)]">{c.nombre}</span>
         </h1>
         <div class="flex flex-wrap items-center gap-2">
