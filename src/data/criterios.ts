@@ -7,6 +7,8 @@ export interface Criterio {
   /** Nuevo en WCAG 2.2 */
   nuevo: boolean;
   descripcion: string;
+  /** Versión breve de la descripción para la meta description, cuando la normal pasa de ~155 caracteres */
+  descripcionCorta?: string;
   /** A quién ayuda */
   ayuda: string;
   caso: string;
@@ -60,6 +62,7 @@ export const CRITERIOS: Criterio[] = [
     "nivel": "A",
     "nuevo": false,
     "descripcion": "Toda imagen, icono o gráfico que transmite información tiene un texto alternativo equivalente. Las imágenes decorativas se marcan para que se ignoren.",
+    "descripcionCorta": "Toda imagen o icono que informa tiene un texto alternativo equivalente; las decorativas se ocultan.",
     "ayuda": "Personas ciegas que usan lector de pantalla y quienes navegan con imágenes desactivadas.",
     "caso": "Una tienda online muestra la foto de unas zapatillas y un icono de carrito sin texto.",
     "bien": "La foto tiene alt «Zapatillas de running azules, vista lateral» y el botón del carrito se anuncia como «Añadir al carrito».",
@@ -168,6 +171,7 @@ export const CRITERIOS: Criterio[] = [
     "nivel": "A",
     "nuevo": false,
     "descripcion": "La estructura visual (títulos, listas, tablas, campos de formulario) está también en el código, para que la tecnología de apoyo la entienda.",
+    "descripcionCorta": "Títulos, listas, tablas y campos se marcan en el código, no solo a la vista, para que la tecnología de apoyo los entienda.",
     "ayuda": "Usuarios de lector de pantalla y de otras tecnologías de apoyo.",
     "caso": "Una página de horarios de tren muestra una tabla y varios encabezados.",
     "bien": "Los títulos usan h1, h2…, la tabla usa th para las cabeceras y cada campo tiene su label asociado.",
@@ -369,6 +373,7 @@ export const CRITERIOS: Criterio[] = [
     "nivel": "AA",
     "nuevo": false,
     "descripcion": "Los tooltips o menús que aparecen al pasar el ratón o recibir foco se pueden cerrar, se puede mover el puntero sobre ellos y no desaparecen solos.",
+    "descripcionCorta": "Los tooltips y menús que aparecen con el ratón o el foco se pueden cerrar, recorrer con el puntero y no desaparecen solos.",
     "ayuda": "Personas con baja visión que usan zoom y personas con dificultades motoras.",
     "caso": "Un icono de ayuda muestra un tooltip con las condiciones de un préstamo.",
     "bien": "El tooltip se cierra con Escape y se puede pasar el ratón por encima para leerlo.",
@@ -975,6 +980,7 @@ export const CRITERIOS: Criterio[] = [
     "nivel": "A",
     "nuevo": false,
     "descripcion": "Exigía un HTML sin errores de anidación ni identificadores duplicados. En WCAG 2.2 se ha eliminado porque los navegadores ya corrigen esos errores. En la EN 301 549 v3.2.1 todavía figura.",
+    "descripcionCorta": "Pedía HTML sin errores de anidación ni ids duplicados. WCAG 2.2 lo elimina, pero sigue en la EN 301 549 v3.2.1.",
     "ayuda": "Usuarios de tecnologías de apoyo.",
     "caso": "Una web con dos elementos que comparten el mismo id.",
     "bien": "Identificadores únicos y HTML válido, como buena práctica.",

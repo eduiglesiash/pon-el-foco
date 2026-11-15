@@ -8,14 +8,41 @@ interface Props {
   /** Título de la página; se completa con el nombre del sitio salvo en la portada */
   title?: string;
   description: string;
+  /** Migas de pan para buscadores (BreadcrumbList), sin la portada, que se añade sola. La última es la página actual. */
+  migas?: { nombre: string; href: string }[];
+  /** Nodos schema.org extra de la página (por ejemplo, un TechArticle). Se añaden al @graph. */
+  datos?: Record<string, unknown>[];
+  /** Páginas que no deben aparecer en buscadores (la 404) */
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, migas = [], datos = [], noindex = false } = Astro.props;
 const SITE = 'Pon el foco';
 const fullTitle = title ? `${title} · ${SITE}` : `${SITE} · Accesibilidad web y WCAG en español`;
 // URL canónica absoluta (con barra final, como las rutas del sitio)
 const canonical = new URL(Astro.url.pathname.replace(/\/?$/, '/'), Astro.site).href;
 const esPortada = Astro.url.pathname === '/';
+const inicio = new URL('/', Astro.site).href;
+// Imagen para compartir en redes y mensajería (1200×630)
+const imagen = new URL('/og.png', Astro.site).href;
+
+// Datos estructurados: el sitio y quién lo publica en todas las páginas; migas y nodos propios donde los haya
+const organizacion = { '@type': 'Organization', '@id': `${inicio}#organizacion`, name: 'Welly Code', url: 'https://www.welly.es/' };
+const sitio = { '@type': 'WebSite', '@id': `${inicio}#sitio`, name: SITE, url: inicio, inLanguage: 'es', publisher: { '@id': organizacion['@id'] } };
+const grafo: Record<string, unknown>[] = [sitio, organizacion, ...datos];
+if (esPortada) Object.assign(sitio, { description });
+if (migas.length > 0) {
+  grafo.push({
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ nombre: 'Inicio', href: '/' }, ...migas].map((m, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: m.nombre,
+      item: new URL(m.href, Astro.site).href,
+    })),
+  });
+}
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': grafo }).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -31,10 +58,7 @@ const esPortada = Astro.url.pathname === '/';
       name='description'
       content={description}
     />
-    <link
-      rel='canonical'
-      href={canonical}
-    />
+    {noindex ? <meta name='robots' content='noindex' /> : <link rel='canonical' href={canonical} />}
     <link
       rel='sitemap'
       href='/sitemap.xml'
@@ -64,24 +88,30 @@ const esPortada = Astro.url.pathname === '/';
       content='es_ES'
     />
     <meta
-      name='twitter:card'
-      content='summary'
+      property='og:image'
+      content={imagen}
     />
-    {
-      esPortada && (
-        <script
-          type='application/ld+json'
-          set:html={JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'WebSite',
-            name: SITE,
-            url: canonical,
-            inLanguage: 'es',
-            description
-          })}
-        />
-      )
-    }
+    <meta
+      property='og:image:width'
+      content='1200'
+    />
+    <meta
+      property='og:image:height'
+      content='630'
+    />
+    <meta
+      property='og:image:alt'
+      content='Pon el foco: accesibilidad web y WCAG en español'
+    />
+    <meta
+      name='twitter:card'
+      content='summary_large_image'
+    />
+    <script
+      type='application/ld+json'
+      set:html={jsonLd}
+    />
+
     <link
       rel='icon'
       href='/favicon.svg'
