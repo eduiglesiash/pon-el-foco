@@ -26,10 +26,7 @@ const datos = {
   <PageHead title="¿Qué alt le pongo?">
     Responde unas preguntas sobre tu imagen, icono o gráfica y sabrás si necesita texto alternativo y cómo escribirlo. Puedes
     volver atrás y cambiar cualquier respuesta.
-  </PageHead>
-
-  <div class="wrap flex flex-col gap-12 pb-6">
-    <section aria-labelledby="t-que-es" class="max-w-[46rem] rounded-[2rem_1.25rem_2.25rem_1.5rem] bg-sign px-[clamp(1.25rem,3vw,2.5rem)] py-6 text-sign-ink">
+    <section slot="aside" aria-labelledby="t-que-es" class="rounded-[2rem_1.25rem_2.25rem_1.5rem] bg-sign px-[clamp(1.25rem,3vw,2.5rem)] py-6 text-sign-ink">
       <h2 id="t-que-es" class="text-[clamp(1.5rem,1.2rem+1.4vw,2rem)]">Qué es el alt</h2>
       <p class="mt-2">
         El atributo <code>alt</code> es el texto que sustituye a una imagen cuando no se puede ver. Lo leen los lectores de
@@ -52,7 +49,9 @@ const datos = {
         repetir el texto que hay al lado.
       </p>
     </section>
+  </PageHead>
 
+  <div class="wrap flex flex-col gap-12 pb-6">
     <section aria-labelledby="t-arbol" class="flex flex-col gap-6">
       <h2 id="t-arbol" class="sr-only">Árbol de decisión</h2>
       <ol class="route max-w-3xl" data-recorrido>

@@ -7,9 +7,24 @@ interface Props {
 }
 
 const { title, wide = false } = Astro.props;
+const ancho = wide ? "wrap-wide" : "wrap";
+// Con el slot «aside», el bloque va a la derecha del título al 50 % desde lg; por debajo, debajo de la introducción
+const lateral = Astro.slots.has("aside");
 ---
 
-<div class:list={[wide ? "wrap-wide" : "wrap", "flex flex-col gap-4 pt-[clamp(2rem,5vw,3.5rem)] pb-8"]}>
-  <h1 class="max-w-[22ch] text-[clamp(2.2rem,1.4rem+3.6vw,3.75rem)]">{title}</h1>
-  <p class="max-w-176 text-[1.15rem] text-muted"><slot /></p>
-</div>
+{
+  lateral ? (
+    <div class:list={[ancho, "grid gap-x-12 gap-y-8 pt-[clamp(2rem,5vw,3.5rem)] pb-10 lg:grid-cols-2 lg:items-start"]}>
+      <div class="flex flex-col gap-4">
+        <h1 class="max-w-[22ch] text-[clamp(2.2rem,1.4rem+3.6vw,3.75rem)]">{title}</h1>
+        <p class="max-w-176 text-[1.15rem] text-muted"><slot /></p>
+      </div>
+      <slot name="aside" />
+    </div>
+  ) : (
+    <div class:list={[ancho, "flex flex-col gap-4 pt-[clamp(2rem,5vw,3.5rem)] pb-8"]}>
+      <h1 class="max-w-[22ch] text-[clamp(2.2rem,1.4rem+3.6vw,3.75rem)]">{title}</h1>
+      <p class="max-w-176 text-[1.15rem] text-muted"><slot /></p>
+    </div>
+  )
+}

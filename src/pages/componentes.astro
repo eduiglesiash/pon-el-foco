@@ -27,10 +27,7 @@ const orden = grupos.flatMap((g) => g.items);
   <PageHead title="Componentes accesibles, con código" wide>
     Muchos elementos de HTML ya son accesibles de serie: solo hay que usarlos. Cuando el diseño pide algo que no existe en
     HTML, aquí tienes cómo construirlo para que cumpla.
-  </PageHead>
-
-  <div class="wrap-wide">
-    <div class="mb-10 rounded-[2rem_1.25rem_2.25rem_1.5rem] bg-sign px-[clamp(1.25rem,3vw,2.5rem)] py-6 text-sign-ink">
+    <div slot="aside" class="rounded-[2rem_1.25rem_2.25rem_1.5rem] bg-sign px-[clamp(1.25rem,3vw,2.5rem)] py-6 text-sign-ink">
       <h2 class="text-[clamp(1.5rem,1.2rem+1.4vw,2rem)]">La regla de oro</h2>
       <p class="mt-2 max-w-[60rem]">
         Si existe un elemento HTML que hace lo que necesitas, úsalo. Un <code>button</code> trae de serie el foco, el teclado,
@@ -38,7 +35,9 @@ const orden = grupos.flatMap((g) => g.items);
         que se anuncia, pero no añade comportamiento.
       </p>
     </div>
+  </PageHead>
 
+  <div class="wrap-wide">
     <div class="grid gap-x-12 gap-y-6 lg:grid-cols-[19rem_minmax(0,1fr)]">
       <nav aria-labelledby="t-catalogo" class="min-w-0">
         {/* Un solo catálogo: en móvil es un desplegable; en escritorio una columna fija (el resumen se oculta). Abierto sin JS. */}
