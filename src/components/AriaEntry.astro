@@ -103,6 +103,14 @@ for (const id of e.componentes ?? []) if (!componente(id)) throw new Error(`aria
         </>
       )
     }
+    {
+      e.enlace && (
+        <>
+          <br />
+          <a href={e.enlace.href} class="font-bold">{e.enlace.texto}</a>
+        </>
+      )
+    }
     <br />
     <a href={`${SPEC}#${e.spec}`} target="_blank" rel="noopener" hreflang="en">
       Definición en la especificación WAI-ARIA 1.2 (en inglés)

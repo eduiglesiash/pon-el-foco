@@ -43,6 +43,8 @@ export interface EntradaAria {
   criterios: string[];
   /** Componentes de /componentes/ que ya lo usan */
   componentes?: string[];
+  /** Enlace a una herramienta o página del sitio relacionada */
+  enlace?: { href: string; texto: string };
   /** Ancla en la especificación WAI-ARIA 1.2 */
   spec: string;
 }
@@ -952,6 +954,7 @@ try {
     },
     criterios: ["1.1.1", "1.3.1", "4.1.2"],
     componentes: ["imagen", "div-boton"],
+    enlace: { href: "/alt/", texto: "¿Imagen informativa o decorativa? Decídelo con «¿Qué alt le pongo?»" },
     spec: "aria-hidden",
   },
 

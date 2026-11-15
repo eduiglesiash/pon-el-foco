@@ -1,0 +1,160 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHead from "../components/PageHead.astro";
+import CodeExample from "../components/CodeExample.astro";
+import Icon from "../components/Icon.astro";
+import { NODOS, RAIZ, VEREDICTO, FUENTE_ARBOL, padres, validarArbol, type Nodo } from "../data/arbol-alt";
+
+// Si el árbol tiene una rama rota, un nodo suelto o un ciclo, la build se detiene con el motivo
+validarArbol();
+
+const PADRES = padres();
+const nodos = Object.values(NODOS) as Nodo[];
+/** Lo que necesita el script para pintar el recorrido: padre de cada nodo, títulos y textos de las respuestas */
+const datos = {
+  raiz: RAIZ,
+  padres: PADRES,
+  titulos: Object.fromEntries(nodos.map((n) => [n.id, n.titulo])),
+  respuestas: Object.fromEntries(nodos.filter((n) => n.tipo === "pregunta").map((n) => [n.id, n.respuestas.map((r) => r.texto)])),
+};
+---
+
+<Layout
+  title="¿Qué alt le pongo? Árbol de decisión"
+  description="Herramienta paso a paso para decidir si una imagen, icono o gráfica necesita texto alternativo y cómo escribirlo, con explicación y código."
+>
+  <PageHead title="¿Qué alt le pongo?">
+    Responde unas preguntas sobre tu imagen, icono o gráfica y sabrás si necesita texto alternativo y cómo escribirlo. Puedes
+    volver atrás y cambiar cualquier respuesta.
+  </PageHead>
+
+  <div class="wrap flex flex-col gap-12 pb-6">
+    <section aria-labelledby="t-que-es" class="max-w-[46rem] rounded-[2rem_1.25rem_2.25rem_1.5rem] bg-sign px-[clamp(1.25rem,3vw,2.5rem)] py-6 text-sign-ink">
+      <h2 id="t-que-es" class="text-[clamp(1.5rem,1.2rem+1.4vw,2rem)]">Qué es el alt</h2>
+      <p class="mt-2">
+        El atributo <code>alt</code> es el texto que sustituye a una imagen cuando no se puede ver. Lo leen los lectores de
+        pantalla, aparece cuando la imagen no carga y lo usan los buscadores. Lo exige el
+        <a href="/criterios/1-1-1/" class="font-bold text-sign-ink underline">criterio 1.1.1 Contenido no textual</a>.
+      </p>
+      <ul class="mt-3 flex list-disc flex-col gap-1.5 pl-6">
+        <li>
+          <b>Con texto</b> (<code>alt="Zapatillas azules"</code>): se lee en lugar de la imagen.
+        </li>
+        <li>
+          <b>Vacío</b> (<code>alt=""</code>): la imagen es decorativa y el lector la salta.
+        </li>
+        <li>
+          <b>Sin el atributo</b>: es un error. Muchos lectores leen entonces el nombre del archivo.
+        </li>
+      </ul>
+      <p class="mt-3">
+        <b>Al escribirlo:</b> cuenta lo que la imagen aporta en ese contexto, en una frase. Sin «imagen de» ni «foto de» y sin
+        repetir el texto que hay al lado.
+      </p>
+    </section>
+
+    <section aria-labelledby="t-arbol" class="flex flex-col gap-6">
+      <h2 id="t-arbol" class="sr-only">Árbol de decisión</h2>
+      <ol class="route max-w-3xl" data-recorrido>
+        {/* El script añade aquí, antes del paso actual, un paso por cada pregunta respondida */}
+        <li class="route-stop" data-state="current" data-actual>
+          <span class="route-marker" aria-hidden="true" data-marcador></span>
+          {
+            nodos.map((n) => (
+              <section id={n.id} aria-labelledby={`t-${n.id}`} data-nodo class="flex scroll-mt-24 flex-col gap-4 pb-10">
+                <h3 id={`t-${n.id}`} tabindex="-1" class="route-q focus-visible:outline-offset-4">
+                  {n.titulo}
+                </h3>
+
+                {n.tipo === "pregunta" ? (
+                  <>
+                    <p class="max-w-[42rem] text-muted">{n.explicacion}</p>
+                    {n.ejemplos && (
+                      <ul class="flex max-w-[42rem] list-disc flex-col gap-1 pl-5 text-[.95rem] text-muted">
+                        {n.ejemplos.map((e) => <li>{e}</li>)}
+                      </ul>
+                    )}
+                    <ul class="flex flex-col gap-2" aria-label="Respuestas">
+                      {n.respuestas.map((r, i) => (
+                        <li>
+                          <a href={`#${r.siguiente}`} data-respuesta={i} class="route-option text-ink no-underline">
+                            <Icon name="arrow-right" size={20} />
+                            <span class="flex flex-col">
+                              <span class="font-bold">{r.texto}</span>
+                              {r.ayuda && <span class="text-[.93rem] text-muted">{r.ayuda}</span>}
+                              <span data-anterior hidden class="text-[.93rem] font-bold">
+                                Tu respuesta anterior
+                              </span>
+                            </span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <>
+                    <div class="flex max-w-[46rem] flex-col gap-2 rounded-[1.75rem_1rem_2rem_1.25rem] bg-sign px-[clamp(1rem,3vw,1.75rem)] py-5 text-sign-ink">
+                      <span
+                        class:list={[
+                          "self-start rounded-full px-3 py-0.5 text-[.9rem] font-extrabold",
+                          n.veredicto === "texto" && "bg-sign-ink text-sign",
+                          n.veredicto === "vacio" && "border-2 border-sign-ink",
+                          n.veredicto === "depende" && "border-2 border-dashed border-sign-ink",
+                        ]}
+                      >
+                        {VEREDICTO[n.veredicto]}
+                      </span>
+                      <p class="text-[1.1rem] font-semibold">{n.resumen}</p>
+                    </div>
+                    <div class="max-w-[46rem]">
+                      <h4 class="mb-2 font-bold">Por qué</h4>
+                      <ul class="flex list-disc flex-col gap-1.5 pl-5">
+                        {n.porque.map((t) => <li>{t}</li>)}
+                      </ul>
+                    </div>
+                    <div class="ejemplo flex flex-col overflow-hidden rounded-2xl border border-edge">
+                      {n.codigo.map((k) => <CodeExample code={k.code} lang={k.lang} tone={k.tone} label={k.label} />)}
+                    </div>
+                    {n.nota && <p class="max-w-[46rem] rounded-xl border border-line bg-sunk px-5 py-4"><b>Ojo:</b> {n.nota}</p>}
+                    <p class="text-[.93rem] text-muted [&_a]:underline">
+                      <a href="/criterios/1-1-1/">Criterio 1.1.1 Contenido no textual</a>
+                      {" · "}
+                      <a href={n.fuente} target="_blank" rel="noopener" hreflang="en">
+                        Más ejemplos en el tutorial de imágenes del W3C (en inglés)
+                      </a>
+                    </p>
+                  </>
+                )}
+
+                <nav aria-label="Moverse por el árbol" class="flex flex-wrap gap-2">
+                  {PADRES[n.id] && (
+                    <a href={`#${PADRES[n.id].id}`} class="route-change no-underline">
+                      <Icon name="arrow-left" size={16} class="mr-1.5" />
+                      Pregunta anterior
+                    </a>
+                  )}
+                  {n.id !== RAIZ && (
+                    <a href={`#${RAIZ}`} class="route-change no-underline">
+                      Empezar de nuevo
+                    </a>
+                  )}
+                </nav>
+              </section>
+            ))
+          }
+        </li>
+      </ol>
+      <p class="max-w-[46rem] text-[.93rem] text-muted [&_a]:underline">
+        Basado en el
+        <a href={FUENTE_ARBOL} target="_blank" rel="noopener" hreflang="en" lang="en">alt Decision Tree</a> del W3C (en inglés),
+        adaptado y ampliado con iconos SVG y gráficas.
+      </p>
+    </section>
+  </div>
+</Layout>
+
+<script type="application/json" id="arbol-alt-datos" set:html={JSON.stringify(datos)} />
+
+<script>
+  import "../scripts/arbol-alt.js";
+</script>
