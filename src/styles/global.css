@@ -118,6 +118,12 @@
     @apply bg-bg text-ink font-body leading-relaxed;
     font-size: 1.0625rem;
     font-variant-numeric: tabular-nums;
+    /* Con el texto ampliado en pantallas estrechas, una palabra larga se parte antes que desbordar la página */
+    overflow-wrap: break-word;
+  }
+  /* Enlaces que abren otra pestaña: flecha visible y aviso para lector de pantalla (texto alternativo del contenido CSS) */
+  a[target="_blank"]::after {
+    content: "\2009\2197" / " (se abre en otra pestaña)";
   }
   ::selection {
     background: var(--mark);
@@ -237,9 +243,6 @@
     background: var(--c);
     color: var(--c-ink);
     border-radius: 0.7rem 0.35rem 0.8rem 0.4rem;
-  }
-  .lista-item > a[aria-current="page"] .text-muted {
-    color: inherit;
   }
   .lista-item[data-obsoleto] .lista-nombre {
     @apply text-muted;
@@ -547,6 +550,12 @@
   .md h4 {
     @apply font-bold;
   }
+}
+
+/* Criterio actual de la lista (fondo del color del principio): todo su texto en --c-ink, también el nivel y los obsoletos.
+   Fuera de @layer para ganar a la utilidad text-muted, que está en la capa de utilidades. */
+.lista-item > a[aria-current="page"] :is(.text-muted, .lista-nombre) {
+  color: inherit;
 }
 
 /* Sin asistente disponible: una sola columna y las preguntas frecuentes primero.
