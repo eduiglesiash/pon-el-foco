@@ -1,10 +1,17 @@
 ---
 import { SECCIONES } from "../data/navegacion";
+import Icon from "./Icon.astro";
 
 const path = Astro.url.pathname.replace(/\/?$/, "/");
+
+// Entrada del menú y barra bajo el texto de la sección activa (forma, no solo color)
+const ITEM =
+  "relative flex min-h-11 items-center whitespace-nowrap rounded-full px-3 text-[.95rem] font-bold text-ink no-underline transition-colors hover:bg-sunk md:text-[.98rem]";
+const ACTIVO =
+  "after:absolute after:inset-x-3 after:bottom-1.5 after:h-1 after:-rotate-1 after:rounded-[2px_5px_3px_6px] after:bg-ink";
 ---
 
-<header class="z-50 border-b border-line bg-bg/85 text-ink backdrop-blur-lg md:sticky md:top-[env(safe-area-inset-top,0px)]" style="view-transition-name: cabecera">
+<header class="relative z-50 border-b border-line bg-bg/85 text-ink backdrop-blur-lg md:sticky md:top-[env(safe-area-inset-top,0px)]" style="view-transition-name: cabecera">
   <div class="wrap-wide flex flex-wrap items-center gap-x-2 gap-y-0 py-1.5 md:gap-x-4 md:py-2">
     <a
       href="/"
@@ -22,22 +29,53 @@ const path = Astro.url.pathname.replace(/\/?$/, "/");
         <span class="hidden font-body text-caption font-semibold tracking-normal text-muted sm:block">Accesibilidad web y WCAG en español</span>
       </span>
     </a>
-    <nav aria-label="Principal" class="order-last w-full md:order-none md:ml-auto md:w-auto">
-      <ul class="-mx-2 -my-1 flex gap-0.5 overflow-x-auto px-2 py-2 pr-8 [mask-image:linear-gradient(to_right,black_calc(100%-2rem),transparent)] [scrollbar-width:none] md:mx-0 md:my-0 md:flex-wrap md:overflow-visible md:p-0 md:[mask-image:none]">
+    <nav aria-label="Principal" class="relative order-last w-full md:order-none md:ml-auto md:w-auto">
+      <ul class="-mx-2 -my-1 flex gap-0.5 overflow-x-auto px-2 py-2 pr-8 [mask-image:linear-gradient(to_right,black_calc(100%-2rem),transparent)] [scrollbar-width:none] md:mx-0 md:my-0 md:flex-wrap md:overflow-visible md:p-0 md:[mask-image:none] data-abierto:[mask-image:none]">
         {
           SECCIONES.map((s) => {
+            if (s.hijos) {
+              // Desplegable (patrón de divulgación): sin JavaScript queda el enlace; el script lo cambia por el botón.
+              // El panel se ancla al <nav> en móvil para que el scroll horizontal de esta lista no lo recorte.
+              const activa = s.hijos.some((h) => path.startsWith(h.href));
+              return (
+                <li class="md:relative" data-desplegable>
+                  <a href={s.href} class:list={[ITEM, activa && ACTIVO]} data-sin-js>
+                    {s.label}
+                  </a>
+                  <button
+                    type="button"
+                    hidden
+                    aria-expanded="false"
+                    aria-controls="nav-herramientas"
+                    class:list={["group cursor-pointer gap-1 bg-transparent", ITEM, activa && ACTIVO]}
+                  >
+                    {s.label}
+                    <Icon name="chevron-down" size={16} class="transition-transform group-aria-expanded:rotate-180 motion-reduce:transition-none" />
+                  </button>
+                  <ul
+                    id="nav-herramientas"
+                    hidden
+                    class="absolute inset-x-0 top-full z-50 mt-1 rounded-2xl border border-edge bg-surface p-1.5 shadow-[0_12px_32px_-16px_var(--shadow)] md:right-auto md:left-0 md:min-w-max"
+                  >
+                    {s.hijos.map((h) => {
+                      const current = path === h.href ? "page" : path.startsWith(h.href) ? "true" : undefined;
+                      return (
+                        <li>
+                          <a href={h.href} aria-current={current} class:list={[ITEM, "rounded-xl", current && ACTIVO]}>
+                            {h.label}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </li>
+              );
+            }
             // "page" en la página exacta; "true" en sus subpáginas (p. ej. un criterio concreto)
             const current = path === s.href ? "page" : path.startsWith(s.href) ? "true" : undefined;
             return (
               <li>
-                <a
-                  href={s.href}
-                  aria-current={current}
-                  class:list={[
-                    "relative flex min-h-11 items-center whitespace-nowrap rounded-full px-3 text-[.95rem] font-bold text-ink no-underline transition-colors hover:bg-sunk md:text-[.98rem]",
-                    current && "after:absolute after:inset-x-3 after:bottom-1.5 after:h-1 after:-rotate-1 after:rounded-[2px_5px_3px_6px] after:bg-ink",
-                  ]}
-                >
+                <a href={s.href} aria-current={current} class:list={[ITEM, current && ACTIVO]}>
                   {s.label}
                 </a>
               </li>
@@ -81,6 +119,36 @@ const path = Astro.url.pathname.replace(/\/?$/, "/");
 </header>
 
 <script>
+  /* Desplegable «Herramientas» (patrón de divulgación del W3C): el foco se queda en el botón al abrir */
+  const caja = document.querySelector<HTMLElement>("[data-desplegable]");
+  if (caja) {
+    const boton = caja.querySelector("button")!;
+    const panel = document.getElementById(boton.getAttribute("aria-controls")!)!;
+    caja.querySelector<HTMLAnchorElement>("[data-sin-js]")!.hidden = true;
+    boton.hidden = false;
+    const abrir = (si: boolean) => {
+      boton.setAttribute("aria-expanded", String(si));
+      panel.hidden = !si;
+      // La máscara del degradado de la lista también taparía el panel: se quita mientras está abierto
+      caja.parentElement!.toggleAttribute("data-abierto", si);
+    };
+    boton.addEventListener("click", () => abrir(panel.hidden));
+    caja.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !panel.hidden) {
+        abrir(false);
+        boton.focus();
+      }
+    });
+    // Salir con Tab. Solo si el foco va a otro elemento: Safari no enfoca al hacer clic y relatedTarget llega vacío.
+    caja.addEventListener("focusout", (e) => {
+      const destino = e.relatedTarget as Node | null;
+      if (destino && !caja.contains(destino)) abrir(false);
+    });
+    document.addEventListener("click", (e) => {
+      if (!caja.contains(e.target as Node)) abrir(false);
+    });
+  }
+
   /* Tamaño de texto */
   const sizes = [90, 100, 112.5, 125, 150, 175, 200];
   let si = 1;
