@@ -3,6 +3,7 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { fechaModificacion } from '../lib/fechas';
 
 interface Props {
   /** Título de la página; se completa con el nombre del sitio salvo en la portada */
@@ -10,15 +11,24 @@ interface Props {
   description: string;
   /** Migas de pan para buscadores (BreadcrumbList), sin la portada, que se añade sola. La última es la página actual. */
   migas?: { nombre: string; href: string }[];
-  /** Nodos schema.org extra de la página (por ejemplo, un TechArticle). Se añaden al @graph. */
+  /** Tipo schema.org de la página (WebPage, CollectionPage, TechArticle…) */
+  tipo?: string;
+  /** Propiedades schema.org extra del nodo de la página (headline, about…) */
+  nodo?: Record<string, unknown>;
+  /** Nodos schema.org extra de la página. Se añaden al @graph. */
   datos?: Record<string, unknown>[];
   /** Páginas que no deben aparecer en buscadores (la 404) */
   noindex?: boolean;
 }
 
-const { title, description, migas = [], datos = [], noindex = false } = Astro.props;
+const { title, description, migas = [], tipo = 'WebPage', nodo = {}, datos = [], noindex = false } = Astro.props;
 const SITE = 'Pon el foco';
-const fullTitle = title ? `${title} · ${SITE}` : `${SITE} · Accesibilidad web y WCAG en español`;
+// Con el nombre del sitio detrás salvo que el título pase de ~60 caracteres, que es lo que muestra el buscador
+const fullTitle = !title
+  ? `${SITE} · Accesibilidad web y WCAG en español`
+  : `${title} · ${SITE}`.length <= 60
+    ? `${title} · ${SITE}`
+    : title;
 // URL canónica absoluta (con barra final, como las rutas del sitio)
 const canonical = new URL(Astro.url.pathname.replace(/\/?$/, '/'), Astro.site).href;
 const esPortada = Astro.url.pathname === '/';
@@ -31,9 +41,28 @@ const organizacion = { '@type': 'Organization', '@id': `${inicio}#organizacion`,
 const sitio = { '@type': 'WebSite', '@id': `${inicio}#sitio`, name: SITE, url: inicio, inLanguage: 'es', publisher: { '@id': organizacion['@id'] } };
 const grafo: Record<string, unknown>[] = [sitio, organizacion, ...datos];
 if (esPortada) Object.assign(sitio, { description });
+// La página en sí, con su fecha de última modificación (del historial de git) cuando se conoce
+const modificado = fechaModificacion(Astro.url.pathname.replace(/\/?$/, '/'));
+if (!noindex) {
+  grafo.push({
+    '@type': tipo,
+    '@id': `${canonical}#pagina`,
+    url: canonical,
+    name: title ?? SITE,
+    description,
+    inLanguage: 'es',
+    isPartOf: { '@id': sitio['@id'] },
+    publisher: { '@id': organizacion['@id'] },
+    ...(modificado && { dateModified: modificado }),
+    ...(migas.length > 0 && { breadcrumb: { '@id': `${canonical}#migas` } }),
+    ...(tipo.endsWith('Article') && { headline: title ?? SITE }),
+    ...nodo,
+  });
+}
 if (migas.length > 0) {
   grafo.push({
     '@type': 'BreadcrumbList',
+    '@id': `${canonical}#migas`,
     itemListElement: [{ nombre: 'Inicio', href: '/' }, ...migas].map((m, i) => ({
       '@type': 'ListItem',
       position: i + 1,

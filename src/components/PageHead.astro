@@ -1,4 +1,6 @@
 ---
+import { fechaLarga, fechaModificacion } from "../lib/fechas";
+
 /** Cabecera de página: el único h1 de cada página. */
 interface Props {
   title: string;
@@ -9,6 +11,8 @@ interface Props {
 }
 
 const { title, wide = false, reparto = "mitad" } = Astro.props;
+// Fecha de la última modificación del contenido de esta página (del historial de git), si se conoce
+const actualizado = fechaModificacion(Astro.url.pathname.replace(/\/?$/, "/"));
 const ancho = wide ? "wrap-wide" : "wrap";
 // Con el slot «aside», el bloque va a la derecha del título desde lg; por debajo, debajo de la introducción
 const lateral = Astro.slots.has("aside");
@@ -25,6 +29,7 @@ const COLUMNAS = {
       <div class="flex flex-col gap-4">
         <h1 class="max-w-[22ch] text-[clamp(2.2rem,1.4rem+3.6vw,3.75rem)]">{title}</h1>
         <p class="max-w-176 text-[1.15rem] text-muted"><slot /></p>
+        {actualizado && <p class="text-[.93rem] text-muted">Actualizado el <time datetime={actualizado}>{fechaLarga(actualizado)}</time>.</p>}
       </div>
       <slot name="aside" />
     </div>
@@ -32,6 +37,7 @@ const COLUMNAS = {
     <div class:list={[ancho, "flex flex-col gap-4 pt-[clamp(2rem,5vw,3.5rem)] pb-8"]}>
       <h1 class="max-w-[22ch] text-[clamp(2.2rem,1.4rem+3.6vw,3.75rem)]">{title}</h1>
       <p class="max-w-176 text-[1.15rem] text-muted"><slot /></p>
+      {actualizado && <p class="text-[.93rem] text-muted">Actualizado el <time datetime={actualizado}>{fechaLarga(actualizado)}</time>.</p>}
     </div>
   )
 }

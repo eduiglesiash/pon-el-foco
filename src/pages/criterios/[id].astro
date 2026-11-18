@@ -11,6 +11,7 @@ import BuscadorCriterios from "../../components/BuscadorCriterios.astro";
 import { CRITERIOS, PAUTAS, PRINCIPIOS, obsoleto as esObsoleto, pauta, slug, type Criterio } from "../../data/criterios";
 import { EJEMPLOS } from "../../data/ejemplos";
 import { w3cUrl } from "../../data/w3c";
+import { fechaLarga, fechaModificacion } from "../../lib/fechas";
 
 export function getStaticPaths() {
   return CRITERIOS.map((c, i) => ({
@@ -76,20 +77,17 @@ const migas = [
   { nombre: "Criterios WCAG 2.2", href: "/criterios/" },
   { nombre: `${c.id} ${c.nombre}`, href: url },
 ];
+// El layout añade url, idioma, isPartOf, publisher y dateModified; aquí va lo propio de la ficha
+const actualizado = fechaModificacion(url);
 const articulo = {
-  "@type": "TechArticle",
   headline: `WCAG ${c.id} ${c.nombre}`,
   description: c.descripcion,
-  inLanguage: "es",
-  url: new URL(url, Astro.site).href,
-  isPartOf: { "@id": new URL("/#sitio", Astro.site).href },
-  publisher: { "@id": new URL("/#organizacion", Astro.site).href },
   about: { "@type": "Thing", name: `WCAG 2.2 ${c.id} ${c.nombre}` },
   educationalLevel: `Nivel ${c.nivel}`,
 };
 ---
 
-<Layout title={`WCAG ${c.id} ${c.nombre}`} description={meta} migas={migas} datos={[articulo]}>
+<Layout title={`WCAG ${c.id} ${c.nombre}`} description={meta} migas={migas} tipo="TechArticle" nodo={articulo}>
   <div
     class="wrap-wide grid gap-x-10 gap-y-6 pt-6 lg:grid-cols-[17rem_minmax(0,1fr)] xl:grid-cols-[18rem_minmax(0,1fr)_14rem]"
   >
@@ -133,9 +131,9 @@ const articulo = {
             ))
           }
         </ul>
-        <h2 id="t-plano" data-plano-titulo class:list={[`principio-${n}`, "border-b-[3px] border-(--c) pb-1.5 text-title"]}>
+        <p id="t-plano" data-plano-titulo class:list={[`principio-${n}`, "border-b-[3px] border-(--c) pb-1.5 text-title font-display leading-[1.08] font-extrabold tracking-[-0.025em] text-balance"]}>
           {PRINCIPIOS[n]}
-        </h2>
+        </p>
         </div>
         <ListaPrincipio n={n} current={c.id} />
       </div>
@@ -302,7 +300,14 @@ const articulo = {
         </p>
       </section>
 
-      <aside aria-labelledby="t-error" class="mt-12 max-w-[44rem] rounded-lg border border-line bg-sunk px-5 py-4">
+      {
+        actualizado && (
+          <p class="mt-12 text-[.93rem] text-muted">
+            Ficha actualizada el <time datetime={actualizado}>{fechaLarga(actualizado)}</time>.
+          </p>
+        )
+      }
+      <aside aria-labelledby="t-error" class:list={[actualizado ? "mt-4" : "mt-12", "max-w-[44rem] rounded-lg border border-line bg-sunk px-5 py-4"]}>
         <h2 id="t-error" class="text-title">¿Has visto un error en este criterio?</h2>
         <p class="mt-1 text-muted">
           Cuéntanoslo y lo revisamos. El aviso se abre en GitHub con el criterio ya indicado; necesitas una cuenta.
