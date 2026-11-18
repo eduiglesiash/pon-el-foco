@@ -41,5 +41,5 @@ Pon el foco (accesibilidad web y WCAG en español) es una web informativa sobre 
 
 ## Estructura
 
-- `src/pages/` una página por sección (inicio, criterios, componentes, me-afecta, normativa) · `src/components/` secciones · `src/data/` contenido (criterios WCAG, ejemplos de código, componentes, contexto del asistente) · `src/scripts/` JS de las demos · `src/styles/global.css` tokens y estilos base.
+- `src/pages/` una página por sección (inicio, criterios, componentes, me-afecta, normativa) · `src/components/` secciones · `src/data/` contenido (criterios WCAG, ejemplos de código, componentes, contexto del asistente) · `src/scripts/` JS de las demos · `src/lib/` utilidades de build (fechas de modificación desde git) · `src/styles/global.css` tokens y estilos base.
 - Los bloques de código se pintan con `<Code>` de Astro (tema `css-variables` mapeado a los tokens): no añadir librerías de resaltado.
